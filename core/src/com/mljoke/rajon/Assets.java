@@ -23,10 +23,16 @@ public class Assets {
 
         assetManager = new AssetManager();
         for (String s : Resources.models) {
-            assetManager.load(s, Model.class);
+            if (!Assets.assetManager.isLoaded(s)) {
+                Assets.assetManager.load(s, Model.class);
+                Assets.assetManager.finishLoading();
+            }
         }
         for (String s : Resources.textures) {
-            assetManager.load(s, Texture.class);
+            if (!Assets.assetManager.isLoaded(s)) {
+                Assets.assetManager.load(s, Texture.class);
+                Assets.assetManager.finishLoading();
+            }
         }
     }
 

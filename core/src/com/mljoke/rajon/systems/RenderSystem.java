@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalShadowLight;
 import com.badlogic.gdx.graphics.g3d.particles.ParticleSystem;
 import com.badlogic.gdx.graphics.g3d.particles.batches.BillboardParticleBatch;
+import com.badlogic.gdx.graphics.g3d.particles.batches.PointSpriteParticleBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.mljoke.rajon.Core;
 import com.mljoke.rajon.Settings;
@@ -54,6 +55,9 @@ public class RenderSystem extends EntitySystem {
         BillboardParticleBatch billboardParticleBatch = new BillboardParticleBatch();
         billboardParticleBatch.setCamera(perspectiveCamera);
         particleSystem.add(billboardParticleBatch);
+        PointSpriteParticleBatch pointSpriteParticleBatch = new PointSpriteParticleBatch();
+        pointSpriteParticleBatch.setCamera(perspectiveCamera);
+        particleSystem.add(pointSpriteParticleBatch);
     }
 
     // Event called when an entity is added to the engine
