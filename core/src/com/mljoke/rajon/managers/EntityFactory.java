@@ -93,6 +93,7 @@ public class EntityFactory {
         Entity entity = new Entity();
         if (enemyModel == null) {
             enemyModel = Assets.assetManager.get("monster.g3dj");
+
             for (Node node : enemyModel.nodes) node.scale.scl(0.0025f);
             enemyModel.calculateTransforms();
             enemyModelComponent = new ModelComponent(enemyModel, x, y, z);
@@ -107,7 +108,7 @@ public class EntityFactory {
         CharacterComponent characterComponent = new CharacterComponent();
         characterComponent.ghostObject = new btPairCachingGhostObject();
         characterComponent.ghostObject.setWorldTransform(modelComponent.instance.transform);
-        characterComponent.ghostShape = new btCapsuleShape(2f, 2f);
+        characterComponent.ghostShape = new btCapsuleShape(3f, 2f);
         characterComponent.ghostObject.setCollisionShape(characterComponent.ghostShape);
         characterComponent.ghostObject.setCollisionFlags(btCollisionObject.CollisionFlags.CF_CHARACTER_OBJECT);
         characterComponent.characterController = new btKinematicCharacterController(characterComponent.ghostObject, characterComponent.ghostShape, .35f, new Vector3(0, 1, 0));
@@ -121,6 +122,7 @@ public class EntityFactory {
         entity.add(animationComponent);
         entity.add(new StatusComponent(animationComponent));
         entity.add(new DieParticleComponent(RenderSystem.particleSystem));
+        entity.add(new DecalComponent());
         return entity;
     }
 

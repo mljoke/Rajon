@@ -61,7 +61,7 @@ public class BulletSystem extends EntitySystem implements EntityListener {
 
     @Override
     public void update(float deltaTime) {
-        collisionWorld.stepSimulation(deltaTime);
+        collisionWorld.stepSimulation(deltaTime, maxSubSteps, fixedTimeStep);
     }
 
     public void dispose() {

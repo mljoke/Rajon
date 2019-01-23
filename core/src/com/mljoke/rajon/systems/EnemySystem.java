@@ -2,12 +2,14 @@ package com.mljoke.rajon.systems;
 
 import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.graphics.g3d.particles.ParticleEffect;
 import com.badlogic.gdx.graphics.g3d.particles.emitters.RegularEmitter;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.mljoke.rajon.GameWorld;
+import com.mljoke.rajon.Logger;
 import com.mljoke.rajon.components.*;
 import com.mljoke.rajon.managers.EntityFactory;
 
@@ -24,7 +26,7 @@ public class EnemySystem extends EntitySystem implements EntityListener {
     private Matrix4 ghost = new Matrix4();
     private Vector3 translation = new Vector3();
     private Random random = new Random();
-
+    Decal decal;
     private float[] xSpawns = {12, -12, 112, -112};
     private float[] zSpawns = {-112, 112, -12, 12};
 
@@ -49,7 +51,6 @@ public class EnemySystem extends EntitySystem implements EntityListener {
             Entity e = entities.get(i);
             ModelComponent mod = e.getComponent(ModelComponent.class);
             ModelComponent playerModel = player.getComponent(ModelComponent.class);
-
             if (!e.getComponent(StatusComponent.class).alive)
                 mod.update(delta);
 
@@ -63,8 +64,12 @@ public class EnemySystem extends EntitySystem implements EntityListener {
                 effect.init();
                 effect.start();
                 RenderSystem.particleSystem.add(effect);
-            }
 
+            }
+ /*           decal = Decal.newDecal(10, 10, e.getComponent(DecalComponent.class).decal);
+            decal.setPosition(mod.instance.transform.getTranslation(enemyPosition));
+            RenderSystem.decalBatch.add(decal);
+            Logger.log(Logger.ANDREAS, Logger.INFO, enemyPosition.toString());*/
             if (!sm.get(e).alive) return;
             playerModel.instance.transform.getTranslation(playerPosition);
             mod.instance.transform.getTranslation(enemyPosition);

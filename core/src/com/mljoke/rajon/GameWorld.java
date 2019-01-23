@@ -2,6 +2,7 @@ package com.mljoke.rajon;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.Bullet;
 import com.badlogic.gdx.physics.bullet.DebugDrawer;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
@@ -10,7 +11,7 @@ import com.mljoke.rajon.managers.EntityFactory;
 import com.mljoke.rajon.systems.*;
 
 public class GameWorld {
-    private static final boolean debug = false;
+    private static final boolean debug = true;
     private DebugDrawer debugDrawer;
     private Engine engine;
     private Entity character, gun, dome;
