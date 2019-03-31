@@ -1,4 +1,4 @@
-package com.mljoke.rajon.widgets;
+package com.mljoke.rajon.screens.widgets;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;

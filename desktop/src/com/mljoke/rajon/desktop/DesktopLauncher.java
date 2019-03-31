@@ -4,6 +4,7 @@ import com.badlogic.gdx.Files;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.mljoke.rajon.Core;
+import com.procedural.world.PBRTestAPP;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
@@ -14,7 +15,8 @@ public class DesktopLauncher {
 		config.height = 900;
 		config.useHDPI = true;
 		config.addIcon("icon.png", Files.FileType.Internal);
-		//config.samples = 3;
+		//
 		new LwjglApplication(new Core(), config);
+//		new LwjglApplication(new PBRTestAPP(), config);
 	}
 }

@@ -1,4 +1,4 @@
-package com.mljoke.rajon.widgets;
+package com.mljoke.rajon.screens.widgets;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -10,8 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mljoke.rajon.Assets;
 import com.mljoke.rajon.Core;
-import com.mljoke.rajon.Settings;
-import com.mljoke.rajon.components.PlayerComponent;
 import com.mljoke.rajon.screens.GameScreen;
 import com.mljoke.rajon.screens.LeaderboardsScreen;
 

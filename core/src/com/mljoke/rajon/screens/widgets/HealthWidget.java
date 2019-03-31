@@ -1,4 +1,4 @@
-package com.mljoke.rajon.widgets;
+package com.mljoke.rajon.screens.widgets;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -9,52 +9,53 @@ import com.badlogic.gdx.utils.Align;
 import com.mljoke.rajon.Assets;
 import com.mljoke.rajon.Settings;
 
-
-public class EnergyWidget extends Actor {
-    private ProgressBar energyBar;
+public class HealthWidget extends Actor {
+    private ProgressBar healthBar;
     private ProgressBar.ProgressBarStyle progressBarStyle;
     private Label label;
 
-    public EnergyWidget() {
+    public HealthWidget() {
         progressBarStyle = new ProgressBar.ProgressBarStyle(
-                Assets.skin.newDrawable("white", Color.OLIVE),
-                Assets.skin.newDrawable("white", Color.ORANGE));
+                Assets.skin.newDrawable("white", Color.RED),
+                Assets.skin.newDrawable("white", Color.GREEN));
         progressBarStyle.knobBefore = progressBarStyle.knob;
-        energyBar = new ProgressBar(0, 100, 1, false, progressBarStyle);
-        label = new Label("Energy", Assets.skin);
+        healthBar = new ProgressBar(0, 100, 1, false, progressBarStyle);
+        label = new Label("Health", Assets.skin);
         label.setAlignment(Align.center);
     }
 
     @Override
     public void act(float delta) {
         if (Settings.Paused) return;
+        healthBar.act(delta);
+        label.act(delta);
     }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        energyBar.draw(batch, parentAlpha);
+        healthBar.draw(batch, parentAlpha);
         label.draw(batch, parentAlpha);
     }
 
     @Override
     public void setPosition(float x, float y) {
         super.setPosition(x, y);
-        energyBar.setPosition(x, y);
+        healthBar.setPosition(x, y);
         label.setPosition(x, y);
     }
 
     @Override
     public void setSize(float width, float height) {
         super.setSize(width, height);
-        energyBar.setSize(width, height);
+        healthBar.setSize(width, height);
         progressBarStyle.background.setMinWidth(width);
         progressBarStyle.background.setMinHeight(height);
-        progressBarStyle.knob.setMinWidth(energyBar.getValue());
+        progressBarStyle.knob.setMinWidth(healthBar.getValue());
         progressBarStyle.knob.setMinHeight(height);
         label.setSize(width, height);
     }
 
     public void setValue(float value) {
-        energyBar.setValue(value);
+        healthBar.setValue(value);
     }
 }

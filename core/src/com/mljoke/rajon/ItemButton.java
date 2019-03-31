@@ -1,26 +1,44 @@
-package com.mljoke.rajon.widgets;
+package com.mljoke.rajon;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.mljoke.rajon.Settings;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.mljoke.rajon.components.PlayerComponent;
 
-public class CrosshairWidget extends Actor {
-
+public class ItemButton extends Actor {
+    TextButton btn = new TextButton("Generic", Assets.skin);
+    Table tbRes;
     private Image crosshairDot, /*crosshairOuterRing,*/
             crosshairInnerRing;
     //private float outerRotationSpeed, innerRotationSpeed;
 
-    public CrosshairWidget() {
+    public ItemButton(Stage stage) {
+        tbRes = new Table();
+        addTypeButton(100, 20, 10f);
+        stage.addActor(tbRes);
         crosshairDot = new Image(new Texture(Gdx.files.internal("crosshair/crossHairPoint.png")));
         crosshairInnerRing = new Image(new Texture(Gdx.files.internal("crosshair/crossHairInnerRing.png")));
         //crosshairOuterRing = new Image(new Texture(Gdx.files.internal("crosshair/crossHairOuterRing.png")));
         //outerRotationSpeed = 1F;
         //innerRotationSpeed = -1F;
     }
-
+    private void addTypeButton(float w, float h, float scale) {
+        tbRes.add(btn).width(80).height(60);
+        tbRes.setPosition(w-3, 60);
+        btn.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                btn.setText("1232");
+            }
+        });
+    }
     @Override
     public void act(float delta) {
         if (Settings.Paused) return;
@@ -32,6 +50,7 @@ public class CrosshairWidget extends Actor {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         if (Settings.Paused) return;
+        tbRes.draw(batch, parentAlpha);
         crosshairDot.draw(batch, parentAlpha);
         crosshairInnerRing.draw(batch, parentAlpha);
         //TODO: Make this smaller

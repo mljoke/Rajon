@@ -2,7 +2,7 @@ package com.mljoke.rajon;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.mljoke.rajon.widgets.*;
+import com.mljoke.rajon.screens.widgets.*;
 
 public class GameUI {
     private Core game;

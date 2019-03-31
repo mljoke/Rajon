@@ -1,4 +1,4 @@
-package com.mljoke.rajon.widgets;
+package com.mljoke.rajon.screens.widgets;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;

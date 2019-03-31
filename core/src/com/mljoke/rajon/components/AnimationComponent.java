@@ -23,4 +23,5 @@ public class AnimationComponent implements Component {
     public void update(float delta) {
         animationController.update(delta);
     }
+
 }

@@ -103,11 +103,11 @@ public class PlayerSystem extends EntitySystem implements EntityListener {
         modelComponent.instance.transform.set(translation.x, translation.y, translation.z, camera.direction.x, camera.direction.y, camera.direction.z, 0);
         camera.position.set(translation.x, translation.y, translation.z);
         camera.update(true);
-        dome.getComponent(ModelComponent.class).instance.transform.setToTranslation(translation.x, translation.y, translation.z);
+        //dome.getComponent(ModelComponent.class).instance.transform.setToTranslation(translation.x, translation.y, translation.z);
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            if (characterComponent.characterController.onGround()) {
+            //if (characterComponent.characterController.onGround()) {
                 characterComponent.characterController.jump(new Vector3(0, 20, 0));
-            }
+            //}
         }
         if (Gdx.input.justTouched()) fire();
 

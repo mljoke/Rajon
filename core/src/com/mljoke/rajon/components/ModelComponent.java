@@ -21,6 +21,6 @@ public class ModelComponent implements Component {
 
     public void update(float delta) {
         if (blendingAttribute != null)
-            blendingAttribute.opacity = blendingAttribute.opacity - delta / 3;
+            blendingAttribute.opacity = blendingAttribute.opacity - delta / 2;
     }
 }

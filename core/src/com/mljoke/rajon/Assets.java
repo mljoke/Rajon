@@ -14,7 +14,7 @@ public class Assets {
 
     public Assets() {
         skin = new Skin();
-        FileHandle fileHandle = Gdx.files.internal("uiskin.json");
+        FileHandle fileHandle = Gdx.files.internal("skin/uiskin.json");
         FileHandle atlasFile = fileHandle.sibling("uiskin.atlas");
         if (atlasFile.exists()) {
             skin.addRegions(new TextureAtlas(atlasFile));

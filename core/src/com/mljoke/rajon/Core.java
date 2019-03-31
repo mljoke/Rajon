@@ -4,6 +4,9 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.mljoke.rajon.screens.EditorScreen;
+import com.mljoke.rajon.screens.GameScreen;
+import com.mljoke.rajon.screens.MainMenuScreen;
 
 public class Core extends ApplicationAdapter {
     public static final float VIRTUAL_WIDTH = 1440;
@@ -15,8 +18,9 @@ public class Core extends ApplicationAdapter {
         new Assets();
         new Settings().load();
         Gdx.input.setCatchBackKey(true);
-        setScreen(new MainMenuScreen(this));
-        //setScreen(new SimpleDecalTest(this));
+        //setScreen(new MainMenuScreen(this));
+        //setScreen(new GameScreen(this));
+        setScreen(new EditorScreen(this));
     }
 
     @Override
