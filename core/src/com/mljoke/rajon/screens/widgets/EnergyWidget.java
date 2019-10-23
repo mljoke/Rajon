@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.utils.Align;
 import com.mljoke.rajon.Assets;
-import com.mljoke.rajon.Settings;
+import com.mljoke.rajon.java.Settings;
 
 
 public class EnergyWidget extends Actor {

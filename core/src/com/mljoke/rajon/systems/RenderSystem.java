@@ -12,7 +12,6 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.decals.CameraGroupStrategy;
 import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
-import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalShadowLight;
 import com.badlogic.gdx.graphics.g3d.environment.PointLight;
 import com.badlogic.gdx.graphics.g3d.particles.ParticleSystem;
@@ -20,7 +19,8 @@ import com.badlogic.gdx.graphics.g3d.particles.batches.BillboardParticleBatch;
 import com.badlogic.gdx.graphics.g3d.particles.batches.PointSpriteParticleBatch;
 import com.badlogic.gdx.graphics.g3d.utils.BaseShaderProvider;
 import com.badlogic.gdx.math.Vector3;
-import com.mljoke.rajon.*;
+import com.mljoke.rajon.Core;
+import com.mljoke.rajon.java.Settings;
 import com.mljoke.rajon.components.*;
 import com.procedural.world.PBRSadherTexture;
 import com.procedural.world.PBRShader;
@@ -41,6 +41,7 @@ public class RenderSystem extends EntitySystem {
     Cubemap cubemap;
     PointLight pointLight;
     public PBRSadherTexture pbrSadherTexture;
+    public PBRShader pbrShader;
 
     public RenderSystem() {
         perspectiveCamera = new PerspectiveCamera(FOV, Core.VIRTUAL_WIDTH, Core.VIRTUAL_HEIGHT);
@@ -48,8 +49,10 @@ public class RenderSystem extends EntitySystem {
         environment = new Environment();
        // environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.5f, 0.5f, 0.5f, 1f));
         //environment.set(new ColorAttribute(ColorAttribute.Fog, 0.13f, 0.13f, 0.13f, 1f));
-        pbrSadherTexture=new PBRSadherTexture();
-        pbrSadherTexture.init();
+        //pbrSadherTexture=new PBRSadherTexture();
+        //pbrSadherTexture.init();
+        pbrShader = new PBRShader();
+        pbrShader.init();
         //environment.add(pointLight = new PointLight().set(0.2f, 0.8f, 0.2f, 0f, 0f, 0f, 100f));
         //shadowLight = new DirectionalShadowLight(1024 * 5, 1024 * 5, 200f, 200f, 1f, 300f);
        //shadowLight.set(0.8f, 0.8f, 0.8f, 0, -0.1f, 0.1f);
@@ -62,7 +65,7 @@ public class RenderSystem extends EntitySystem {
         shaderProvider = new BaseShaderProvider() {
             @Override
             protected Shader createShader(Renderable renderable) {
-                return pbrSadherTexture;
+                return pbrShader;
             }
         };
         batch = new ModelBatch(shaderProvider);
@@ -72,12 +75,13 @@ public class RenderSystem extends EntitySystem {
         position = new Vector3();
 
         particleSystem = ParticleSystem.get();
-        BillboardParticleBatch billboardParticleBatch = new BillboardParticleBatch();
-        billboardParticleBatch.setCamera(perspectiveCamera);
-        particleSystem.add(billboardParticleBatch);
         PointSpriteParticleBatch pointSpriteParticleBatch = new PointSpriteParticleBatch();
         pointSpriteParticleBatch.setCamera(perspectiveCamera);
         particleSystem.add(pointSpriteParticleBatch);
+        BillboardParticleBatch billboardParticleBatch = new BillboardParticleBatch();
+        billboardParticleBatch.setCamera(perspectiveCamera);
+        particleSystem.add(billboardParticleBatch);
+
         decalBatch = new DecalBatch(new CameraGroupStrategy(perspectiveCamera));
     }
 
@@ -114,13 +118,14 @@ public class RenderSystem extends EntitySystem {
 
     private void drawModels() {
         batch.begin(perspectiveCamera);
+        //decalBatch.flush();
         for (int i = 0; i < entities.size(); i++) {
             if (entities.get(i).getComponent(GunComponent.class) == null) {
                 ModelComponent mod = entities.get(i).getComponent(ModelComponent.class);
                 //testAttribute = (TestAttribute)mod.model.materials.get(0).get(TestAttribute.ID);
                 //mod.instance.materials.get(0).clear();
                 //mod.instance.materials.get(0).set(Assets.assetManager.get("shaders/materials/brick01.g3dj", Model.class).materials.get(0));
-                batch.render(mod.instance, environment);
+               batch.render(mod.instance, environment);
 
             }
         }
@@ -128,13 +133,13 @@ public class RenderSystem extends EntitySystem {
 
         renderParticleEffects();
 
-        decalBatch.flush();
-        //drawGun();
+
+        drawGun();
 
     }
 
     private void renderParticleEffects() {
-        batch.begin(perspectiveCamera);
+        batch.begin(gunCamera);
         particleSystem.update(); // technically not necessary for rendering
         particleSystem.begin();
         particleSystem.draw();

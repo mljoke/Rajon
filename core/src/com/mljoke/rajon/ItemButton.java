@@ -1,16 +1,18 @@
 package com.mljoke.rajon;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.mljoke.rajon.components.PlayerComponent;
+import com.mljoke.rajon.java.Settings;
+import com.mljoke.rajon.managers.EntityFactory;
 
 public class ItemButton extends Actor {
     TextButton btn = new TextButton("Generic", Assets.skin);
@@ -19,9 +21,17 @@ public class ItemButton extends Actor {
             crosshairInnerRing;
     //private float outerRotationSpeed, innerRotationSpeed;
 
-    public ItemButton(Stage stage) {
+    public ItemButton(Stage stage, final Engine engine) {
+
         tbRes = new Table();
         addTypeButton(100, 20, 10f);
+        btn.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                btn.setText("1232");
+                engine.addEntity(EntityFactory.createStaticEntity("deer.g3db","deer", new Vector3()));
+            }
+        });
         stage.addActor(tbRes);
         crosshairDot = new Image(new Texture(Gdx.files.internal("crosshair/crossHairPoint.png")));
         crosshairInnerRing = new Image(new Texture(Gdx.files.internal("crosshair/crossHairInnerRing.png")));
@@ -32,12 +42,6 @@ public class ItemButton extends Actor {
     private void addTypeButton(float w, float h, float scale) {
         tbRes.add(btn).width(80).height(60);
         tbRes.setPosition(w-3, 60);
-        btn.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                btn.setText("1232");
-            }
-        });
     }
     @Override
     public void act(float delta) {

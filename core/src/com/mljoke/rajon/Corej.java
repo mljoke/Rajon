@@ -4,23 +4,24 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.mljoke.rajon.java.Settings;
 import com.mljoke.rajon.screens.EditorScreen;
 import com.mljoke.rajon.screens.GameScreen;
-import com.mljoke.rajon.screens.MainMenuScreen;
 
-public class Core extends ApplicationAdapter {
-    public static final float VIRTUAL_WIDTH = 1440;
+public class Corej extends ApplicationAdapter {
+    public static final float VIRTUAL_WIDTH = 1600;
     public static final float VIRTUAL_HEIGHT = 900;
     Screen screen;
 
     @Override
     public void create() {
         new Assets();
-        new Settings().load();
+        new Settings();
+        Settings.load();
         Gdx.input.setCatchBackKey(true);
         //setScreen(new MainMenuScreen(this));
         //setScreen(new GameScreen(this));
-        setScreen(new EditorScreen(this));
+        //setScreen(new EditorScreen(this));
     }
 
     @Override

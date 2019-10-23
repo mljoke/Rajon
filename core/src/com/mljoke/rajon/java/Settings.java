@@ -1,9 +1,10 @@
-package com.mljoke.rajon;
+package com.mljoke.rajon.java;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.mljoke.rajon.Assets;
 
 public class Settings {
     public static boolean Paused;

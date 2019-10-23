@@ -11,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mljoke.rajon.Assets;
 import com.mljoke.rajon.Core;
-import com.mljoke.rajon.Settings;
+import com.mljoke.rajon.java.Settings;
 import com.mljoke.rajon.screens.GameScreen;
 
 public class PauseWidget extends Actor {

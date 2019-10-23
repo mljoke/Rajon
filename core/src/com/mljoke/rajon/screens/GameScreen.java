@@ -5,7 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.mljoke.rajon.Core;
 import com.mljoke.rajon.GameUI;
 import com.mljoke.rajon.GameWorld;
-import com.mljoke.rajon.Settings;
+import com.mljoke.rajon.java.Settings;
 
 public class GameScreen implements Screen {
     Core game;

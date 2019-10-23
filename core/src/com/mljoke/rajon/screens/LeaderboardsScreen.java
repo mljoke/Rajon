@@ -12,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mljoke.rajon.Assets;
 import com.mljoke.rajon.Core;
-import com.mljoke.rajon.Settings;
+import com.mljoke.rajon.java.Settings;
 
 public class LeaderboardsScreen implements Screen {
     Core game;

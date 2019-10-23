@@ -12,6 +12,9 @@ import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.mljoke.rajon.*;
+import com.mljoke.rajon.GameUI;
+import com.mljoke.rajon.GameWorld;
+import com.mljoke.rajon.java.Settings;
 import com.mljoke.rajon.components.*;
 
 public class PlayerSystem extends EntitySystem implements EntityListener {
@@ -26,15 +29,22 @@ public class PlayerSystem extends EntitySystem implements EntityListener {
     private final Vector3 tmp = new Vector3();
     private final PerspectiveCamera camera;
     private GameWorld gameWorld;
+    private Editor editor;
     private ClosestRayResultCallback rayTestCB;
     private Vector3 rayFrom = new Vector3();
     private Vector3 rayTo = new Vector3();
     private Vector3 smooth = new Vector3();
 
+
     public PlayerSystem(PerspectiveCamera camera, GameUI gameUI, GameWorld gameWorld) {
         this.camera = camera;
         this.gameUI = gameUI;
         this.gameWorld = gameWorld;
+        rayTestCB = new ClosestRayResultCallback(Vector3.Zero, Vector3.Z);
+    }
+    public PlayerSystem(PerspectiveCamera camera, Editor gameWorld) {
+        this.camera = camera;
+        this.editor = gameWorld;
         rayTestCB = new ClosestRayResultCallback(Vector3.Zero, Vector3.Z);
     }
 
@@ -72,12 +82,16 @@ public class PlayerSystem extends EntitySystem implements EntityListener {
     }
 
     private void updateMovement(float delta) {
-        float deltaX = -Gdx.input.getDeltaX() * 0.3f;
-        float deltaY = -Gdx.input.getDeltaY() * 0.3f;
+        float deltaX = -Gdx.input.getDeltaX() * 0.2f;
+        float deltaY = -Gdx.input.getDeltaY() * 0.2f;
+
         tmp.set(0, 0, 0);
+
         camera.rotate(camera.up, deltaX);
-        tmp.set(camera.direction).crs(camera.up).nor();
+
+        tmp.set(camera.direction).crs(camera.up);
         camera.direction.rotate(tmp, deltaY);
+
         tmp.set(0, 0, 0);
         characterComponent.characterDirection.set(-1, 0, 0).rot(modelComponent.instance.transform).nor();
         characterComponent.walkDirection.set(0, 0, 0);
@@ -94,7 +108,7 @@ public class PlayerSystem extends EntitySystem implements EntityListener {
         if (Gdx.input.isKeyPressed(Input.Keys.A)) tmp.set(camera.direction).crs(camera.up).scl(-1);
         if (Gdx.input.isKeyPressed(Input.Keys.D)) tmp.set(camera.direction).crs(camera.up);
         characterComponent.walkDirection.add(tmp);
-        characterComponent.walkDirection.scl(10f * delta);
+        characterComponent.walkDirection.scl(20f * delta);
         characterComponent.characterController.setWalkDirection(characterComponent.walkDirection);
         Matrix4 ghost = new Matrix4();
         Vector3 translation = new Vector3();
@@ -110,7 +124,6 @@ public class PlayerSystem extends EntitySystem implements EntityListener {
             //}
         }
         if (Gdx.input.justTouched()) fire();
-
         gun.getComponent(ModelComponent.class).instance.transform.getTranslation(smooth);
         gun.getComponent(ModelComponent.class).instance.transform.translate((smooth.x + (deltaX - smooth.x) * 0.05f) - 2.5f, 0, 0);
     }
@@ -123,7 +136,11 @@ public class PlayerSystem extends EntitySystem implements EntityListener {
         rayTestCB.setClosestHitFraction(1f);
         rayTestCB.setRayFromWorld(rayFrom);
         rayTestCB.setRayToWorld(rayTo);
-        gameWorld.bulletSystem.collisionWorld.rayTest(rayFrom, rayTo, rayTestCB);
+        if (gameWorld != null) {
+            gameWorld.bulletSystem.collisionWorld.rayTest(rayFrom, rayTo, rayTestCB);
+        } else {
+            editor.bulletSystem.collisionWorld.rayTest(rayFrom, rayTo, rayTestCB);
+        }
         if (rayTestCB.hasHit()) {
             final btCollisionObject obj = rayTestCB.getCollisionObject();
             if (((Entity) obj.userData).getComponent(EnemyComponent.class) != null) {
@@ -137,19 +154,18 @@ public class PlayerSystem extends EntitySystem implements EntityListener {
             }
         }
 
-
         ParticleEffect effect = gun.getComponent(FireParticleComponent.class).originalEffect.copy();
-        ((RegularEmitter) effect.getControllers().first().emitter).setEmissionMode(RegularEmitter.EmissionMode.EnabledUntilCycleEnd);
+        ((RegularEmitter) effect.getControllers().first().emitter).setEmissionMode(RegularEmitter.EmissionMode.Enabled);
         effect.setTransform(gun.getComponent(ModelComponent.class).instance.transform);
-        effect.scale(3.25f, 1, 1.5f);
+        effect.scale(2.5f, -1.9f, -4);
         effect.init();
         effect.start();
-        RenderSystem.particleSystem.add(effect);
+        RenderSystem.particleSystem.add(effect);//TODO
         gun.getComponent(AnimationComponent.class).animate(gun.getComponent(ModelComponent.class).instance.animations.get(0).id, 1, 1);
         Logger.log(Logger.ANDREAS, Logger.INFO, gun.getComponent(ModelComponent.class).instance.animations.get(0).id);
     }
 
     private void updateStatus() {
-        gameUI.healthWidget.setValue(playerComponent.health);
+        //gameUI.healthWidget.setValue(playerComponent.health);
     }
 }

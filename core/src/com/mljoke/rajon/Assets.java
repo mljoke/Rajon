@@ -6,6 +6,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class Assets {
@@ -20,22 +21,29 @@ public class Assets {
             skin.addRegions(new TextureAtlas(atlasFile));
         }
         skin.load(fileHandle);
-
+        int i = 0;
         assetManager = new AssetManager();
         for (String s : Resources.models) {
-            if (!Assets.assetManager.isLoaded(s)) {
-                Assets.assetManager.load(s, Model.class);
-                Assets.assetManager.finishLoading();
+
+            if (!assetManager.isLoaded(s)) {
+                assetManager.load(s, Model.class);
+                assetManager.finishLoading();
+                for (Node node : assetManager.<Model>get(s).nodes) {
+                    node.scale.scl(Resources.scaleF[i]);
+                }
             }
+            i++;
         }
         for (String s : Resources.textures) {
-            if (!Assets.assetManager.isLoaded(s)) {
-                Assets.assetManager.load(s, Texture.class);
-                Assets.assetManager.finishLoading();
+            if (!assetManager.isLoaded(s)) {
+                assetManager.load(s, Texture.class);
+                assetManager.finishLoading();
             }
         }
     }
-
+    public static <T> T get(String index) {
+            return assetManager.get(index);
+    }
     public static void dispose() {
         skin.dispose();
         assetManager.dispose();

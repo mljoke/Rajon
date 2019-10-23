@@ -3,17 +3,14 @@ package com.mljoke.rajon.systems;
 import com.badlogic.ashley.core.*;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.*;
-import com.badlogic.gdx.physics.bullet.dynamics.btConstraintSolver;
-import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
-import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
-import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver;
+import com.badlogic.gdx.physics.bullet.dynamics.*;
 import com.mljoke.rajon.components.*;
 
 
 public class BulletSystem extends EntitySystem implements EntityListener {
     public final btCollisionConfiguration collisionConfiguration;
     public final btCollisionDispatcher dispatcher;
-    public final btBroadphaseInterface broadphase;
+    public final btBroadphaseInterface sweep;
     public final btConstraintSolver solver;
     public final btDiscreteDynamicsWorld collisionWorld;
     private btGhostPairCallback ghostPairCallback;
@@ -51,12 +48,12 @@ public class BulletSystem extends EntitySystem implements EntityListener {
         myContactListener.enable();
         collisionConfiguration = new btDefaultCollisionConfiguration();
         dispatcher = new btCollisionDispatcher(collisionConfiguration);
-        broadphase = new btAxisSweep3(new Vector3(-1000, -1000, -1000), new Vector3(1000, 1000, 1000));
+        sweep =  new btAxisSweep3(new Vector3(-1000, -1000, -1000), new Vector3(1000, 1000, 1000));
         solver = new btSequentialImpulseConstraintSolver();
-        collisionWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
+        collisionWorld = new btDiscreteDynamicsWorld(dispatcher, sweep, solver, collisionConfiguration);
         ghostPairCallback = new btGhostPairCallback();
-        broadphase.getOverlappingPairCache().setInternalGhostPairCallback(ghostPairCallback);
-        this.collisionWorld.setGravity(new Vector3(0, -0.5f, 0));
+        sweep.getOverlappingPairCache().setInternalGhostPairCallback(ghostPairCallback);
+        //this.collisionWorld.setGravity(new Vector3(0, -10f, 0));
     }
 
     @Override
@@ -67,7 +64,7 @@ public class BulletSystem extends EntitySystem implements EntityListener {
     public void dispose() {
         collisionWorld.dispose();
         if (solver != null) solver.dispose();
-        if (broadphase != null) broadphase.dispose();
+        if (sweep != null) sweep.dispose();
         if (dispatcher != null) dispatcher.dispose();
         if (collisionConfiguration != null) collisionConfiguration.dispose();
         ghostPairCallback.dispose();

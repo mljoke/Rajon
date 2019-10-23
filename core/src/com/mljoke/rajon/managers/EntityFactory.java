@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
+import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
@@ -14,6 +15,7 @@ import com.badlogic.gdx.physics.bullet.dynamics.btKinematicCharacterController;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.mljoke.rajon.Assets;
 import com.mljoke.rajon.Bullet.MotionState;
+import com.mljoke.rajon.Logger;
 import com.mljoke.rajon.components.*;
 import com.mljoke.rajon.systems.BulletSystem;
 import com.mljoke.rajon.systems.RenderSystem;
@@ -21,23 +23,24 @@ import com.procedural.world.PBRTextureAttribute;
 
 
 public class EntityFactory {
-    public static Entity createStaticEntity(Model model, Vector3 vec) {
-        return createStaticEntity(model, vec.x, vec.y, vec.z);
+    private static boolean sclNodes = true;
+
+    public static Entity createStaticEntity(String str, String material, Vector3 vec) {
+        return createStaticEntity(str, material, vec.x, vec.y, vec.z);
     }
 
-    public static Entity createStaticEntity(Model model, float x, float y, float z) {
+    public static Entity createStaticEntity(String name, String material, float x, float y, float z) {
+        Model model = Assets.assetManager.get(name);
         final BoundingBox boundingBox = new BoundingBox();
-        model.calculateBoundingBox(boundingBox);
-        float scale = 1f;
-        if(model == null) {
+        float scale =0.05f;
 
-        }
+        model.calculateBoundingBox(boundingBox);
         Vector3 tmpV = new Vector3();
 
         btCollisionShape col = new btBoxShape(tmpV.set(boundingBox.getWidth() * 0.5f * scale, boundingBox.getHeight() * 0.5f * scale, boundingBox.getDepth() * 0.5f * scale));
         Entity entity = new Entity();
-        Material material = createMaterial("mybricks3");
-        model.materials.get(0).set(material);
+        Material mat = createMaterial(material);
+        model.materials.get(0).set(mat);
         ModelComponent modelComponent = new ModelComponent(model, x, y, z);
         entity.add(modelComponent);
         BulletComponent bulletComponent = new BulletComponent();
@@ -57,14 +60,19 @@ public class EntityFactory {
     private static Model enemyModel;
     private static ModelComponent enemyModelComponent;
 
-    public static Material createMaterial(String materialName){
-        Material material=new Material();
-        material.set(PBRTextureAttribute.createAlbedo(new Texture("materials/" + materialName + "/Diffuse.png")));
-        material.set(PBRTextureAttribute.createMetallic(new Texture("materials/" + materialName + "/Specular.png")));
-        material.set(PBRTextureAttribute.createRoughness(new Texture("materials/" + materialName + "/Glossiness.png")));
-        material.set(PBRTextureAttribute.createAmbientOcclusion(new Texture("materials/" + materialName + "/AO.png")));
-        material.set(PBRTextureAttribute.createHeight(new Texture("materials/" + materialName + "/Height.png")));
-        material.set(PBRTextureAttribute.createNormal(new Texture("materials/" + materialName + "/Normal.png")));
+    public static Material createMaterial(String materialName) {
+        Material material = new Material();
+        try {
+            material.set(PBRTextureAttribute.createAlbedo(new Texture("materials/" + materialName + "/Diffuse.png")));
+            material.set(PBRTextureAttribute.createMetallic(new Texture("materials/" + materialName + "/Specular.png")));
+            material.set(PBRTextureAttribute.createRoughness(new Texture("materials/" + materialName + "/Glossiness.png")));
+            material.set(PBRTextureAttribute.createAmbientOcclusion(new Texture("materials/" + materialName + "/AO.png")));
+            material.set(PBRTextureAttribute.createHeight(new Texture("materials/" + materialName + "/Height.png")));
+            material.set(PBRTextureAttribute.createNormal(new Texture("materials/" + materialName + "/Normal.png")));
+        } catch (Exception e) {
+            Logger.log(Logger.ANDREAS, Logger.INFO, e.getMessage());
+        }
+
 
         return material;
     }
@@ -77,6 +85,16 @@ public class EntityFactory {
         playerModel = modelBuilder.createCapsule(2f, 6f, 16, material, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates);
     }
 
+    public static Entity createDecal(RenderSystem renderSystem, float x, float y, float z) {
+        Entity entity = new Entity();
+        DecalComponent decalComponent = new DecalComponent();
+        Decal decal = Decal.newDecal(10, 10, decalComponent.decal);
+        decal.setPosition(x, y, z);
+        RenderSystem.decalBatch.add(decal);
+        entity.add(decalComponent);
+
+        return entity;
+    }
 
     private static Entity createCharacter(BulletSystem bulletSystem, float x, float y, float z) {
         Entity entity = new Entity();
@@ -85,7 +103,7 @@ public class EntityFactory {
         CharacterComponent characterComponent = new CharacterComponent();
         characterComponent.ghostObject = new btPairCachingGhostObject();
         characterComponent.ghostObject.setWorldTransform(modelComponent.instance.transform);
-        characterComponent.ghostShape = new btCapsuleShape(1f, 1f);
+        characterComponent.ghostShape = new btCapsuleShape(2f, 3f);
         characterComponent.ghostObject.setCollisionShape(characterComponent.ghostShape);
         characterComponent.ghostObject.setCollisionFlags(btCollisionObject.CollisionFlags.CF_CHARACTER_OBJECT);
         characterComponent.characterController = new btKinematicCharacterController(characterComponent.ghostObject, characterComponent.ghostShape, .65f, new Vector3(0, 1f, 0));
@@ -104,32 +122,19 @@ public class EntityFactory {
         return entity;
     }
 
-    public static Renderable createRenderableFromMesh(Mesh mesh, Material material, Shader shader, Environment environment) {
-        Renderable outRend = new Renderable();
-        outRend.meshPart.mesh = mesh;
-        outRend.meshPart.primitiveType = GL20.GL_TRIANGLES;
-        if (material != null) outRend.material = material;
-        if (environment != null) outRend.environment = environment;
-        outRend.meshPart.offset = 0;
-        //strada.shader=elrShader;
-        if (shader != null) outRend.shader = shader;
-        outRend.meshPart.size = mesh.getNumIndices();
-        return outRend;
-    }
-
     //Now we are able to spawn an enemy with the following creation function:
     public static Entity createEnemy(BulletSystem bulletSystem, float x, float y, float z) {
         Entity entity = new Entity();
         if (enemyModel == null) {
-            enemyModel = Assets.assetManager.get("deer.g3db");
-            for (Node node : enemyModel.nodes) {
+            enemyModel = Assets.get("deer.g3db");
+/*            for (Node node : enemyModel.nodes) {
                 node.translation.sub(0, 1f, 0);
-                node.scale.scl(0.03f);
-            }
+                node.scale.scl(0.05f);
+            }*/
             enemyModel.calculateTransforms();
             enemyModelComponent = new ModelComponent(enemyModel, x, y, z);
             Material material = createMaterial("deer");
-            enemyModel.materials.get(0).set(createMaterial("deer"));
+            enemyModel.materials.get(0).set(material);
             BlendingAttribute blendingAttribute;
             material.set(blendingAttribute = new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA));
             enemyModelComponent.blendingAttribute = blendingAttribute;
@@ -141,7 +146,7 @@ public class EntityFactory {
         CharacterComponent characterComponent = new CharacterComponent();
         characterComponent.ghostObject = new btPairCachingGhostObject();
         characterComponent.ghostObject.setWorldTransform(modelComponent.instance.transform);
-        characterComponent.ghostShape = new btCapsuleShape(1f, 1f);
+        characterComponent.ghostShape = new btCapsuleShape(2f, 3f);
         characterComponent.ghostObject.setCollisionShape(characterComponent.ghostShape);
         characterComponent.ghostObject.setCollisionFlags(btCollisionObject.CollisionFlags.CF_CHARACTER_OBJECT);
         characterComponent.characterController = new btKinematicCharacterController(characterComponent.ghostObject, characterComponent.ghostShape, .55f, new Vector3(0, 1, 0));
@@ -176,9 +181,9 @@ public class EntityFactory {
     public static Entity loadScene(int x, int y, int z) {
         Entity entity = new Entity();
         Model model = Assets.assetManager.get("arena.g3dj");
-       //for (Node node : model.nodes) node.scale.scl(3.1f);
+        //for (Node node : model.nodes) node.scale.scl(3.1f);
         model.materials.get(0).set(createMaterial("grass1"));
-        model.materials.get(1).set(createMaterial("rustediron-streaks"));
+        model.materials.get(1).set(createMaterial("mybricks3"));
         ModelComponent modelComponent = new ModelComponent(model, x, y, z);
         entity.add(modelComponent);
         BulletComponent bulletComponent = new BulletComponent();
@@ -195,6 +200,7 @@ public class EntityFactory {
 
     public static Entity loadDome(int x, int y, int z) {
         Model model = Assets.assetManager.get("spacedome.g3db");
+        model.materials.get(0).set(createMaterial("grass1"));
         ModelComponent modelComponent = new ModelComponent(model, x, y, z);
         Entity entity = new Entity();
         entity.add(modelComponent);

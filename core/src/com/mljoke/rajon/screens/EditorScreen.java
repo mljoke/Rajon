@@ -3,6 +3,8 @@ package com.mljoke.rajon.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.mljoke.rajon.*;
+import com.mljoke.rajon.EditorUI;
+import com.mljoke.rajon.java.Settings;
 
 public class EditorScreen implements Screen {
 
@@ -12,9 +14,8 @@ public class EditorScreen implements Screen {
 
     public EditorScreen(Core game) {
         this.game = game;
-        editorUI = new EditorUI();
         editor = new Editor();
-
+        editorUI = new EditorUI(editor.engine);
         Settings.Paused = false;
         Gdx.input.setInputProcessor(editorUI.stage);
         //Gdx.input.setCursorCatched(true);

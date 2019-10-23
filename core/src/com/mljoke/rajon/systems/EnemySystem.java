@@ -2,16 +2,13 @@ package com.mljoke.rajon.systems;
 
 import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.utils.ImmutableArray;
-import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.graphics.g3d.particles.ParticleEffect;
 import com.badlogic.gdx.graphics.g3d.particles.emitters.RegularEmitter;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
-import com.mljoke.rajon.Assets;
 import com.mljoke.rajon.GameWorld;
-import com.mljoke.rajon.Logger;
 import com.mljoke.rajon.components.*;
 import com.mljoke.rajon.managers.EntityFactory;
 
@@ -68,9 +65,9 @@ public class EnemySystem extends EntitySystem implements EntityListener {
                 RenderSystem.particleSystem.add(effect);
                 Vector3 tr = new Vector3();
                         e.getComponent(ModelComponent.class).instance.transform.getTranslation(tr);
-                engine.addEntity(EntityFactory.createStaticEntity((Model) Assets.assetManager.get("deer.g3db"), tr));
+                engine.addEntity(EntityFactory.createStaticEntity("deer.g3db","deer", tr));
             }
- /*           decal = Decal.newDecal(10, 10, e.getComponent(DecalComponent.class).decal);
+ /*         decal = Decal.newDecal(10, 10, e.getComponent(DecalComponent.class).decal);
             decal.setPosition(mod.instance.transform.getTranslation(enemyPosition));
             RenderSystem.decalBatch.add(decal);
             Logger.log(Logger.ANDREAS, Logger.INFO, enemyPosition.toString());*/

@@ -5,16 +5,18 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.physics.bullet.Bullet;
 import com.badlogic.gdx.physics.bullet.DebugDrawer;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
-import com.mljoke.rajon.components.CharacterComponent;
+import com.mljoke.rajon.java.Settings;
 import com.mljoke.rajon.managers.EntityFactory;
 import com.mljoke.rajon.systems.*;
 
 public class Editor {
     private static final boolean debug = true;
     private DebugDrawer debugDrawer;
-    private Engine engine;
+    public Engine engine;
     public BulletSystem bulletSystem;
     private RenderSystem renderSystem;
+    private Entity character, gun;
+    public PlayerSystem playerSystem;
 
     public Editor() {
         Bullet.init();
@@ -34,14 +36,22 @@ public class Editor {
         engine = new Engine();
         engine.addSystem(renderSystem = new RenderSystem());
         EntityFactory.renderSystem = renderSystem;
+        engine.addSystem(playerSystem = new PlayerSystem(renderSystem.perspectiveCamera, this));
         engine.addSystem(bulletSystem = new BulletSystem());
         if (debug) bulletSystem.collisionWorld.setDebugDrawer(this.debugDrawer);
     }
 
     private void addEntities() {
-
+        engine.addEntity(EntityFactory.loadScene(0, 0, 0));
+        createPlayer(0, 6, 0);
     }
-
+    private void createPlayer(float x, float y, float z) {
+        character = EntityFactory.createPlayer(bulletSystem, x, y, z);
+        engine.addEntity(character);
+        engine.addEntity(gun = EntityFactory.loadGun(2.5f, -1.9f, -4));
+        playerSystem.gun = gun;
+        renderSystem.gun = gun;
+    }
     private void loadLevel() {
         engine.addEntity(EntityFactory.loadScene(0, 0, 0));
         //engine.addEntity(dome = EntityFactory.loadDome(0, 0, 0));

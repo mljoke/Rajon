@@ -1,5 +1,6 @@
 package com.mljoke.rajon;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -7,15 +8,17 @@ public class EditorUI {
 
     public Stage stage;
     public ItemButton new_item_button;
+    private Engine engine;
 
-    public EditorUI() {
+    public EditorUI(Engine engine) {
+        this.engine = engine;
         stage = new Stage(new FitViewport(Core.VIRTUAL_WIDTH, Core.VIRTUAL_HEIGHT));
         set_widgets();
         configure_widgets();
     }
 
     private void set_widgets() {
-        new_item_button =  new ItemButton(stage);
+        new_item_button =  new ItemButton(stage, engine);
     }
 
     private void configure_widgets() {
