@@ -8,14 +8,11 @@ import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.Shader;
 import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.IntIntMap;
 import com.mljoke.rajon.Logger;
-
-import java.security.Key;
+import com.mljoke.rajon.java.Resources;
 
 
 /**
@@ -51,7 +48,7 @@ public class PBRShader implements Shader {
 
     Mesh currentMesh;
 
-    public void loadReflection(String refl){
+    public void loadReflection(String refl) {
         ref=new Cubemap(Gdx.files.internal("cubemaps/" + refl + "_c00.tga"), Gdx.files.internal("cubemaps/" + refl + "_c01.tga"),
                 Gdx.files.internal("cubemaps/" + refl + "_c02.tga"), Gdx.files.internal("cubemaps/" + refl + "_c03.tga"),
                 Gdx.files.internal("cubemaps/" + refl + "_c04.tga"), Gdx.files.internal("cubemaps/" + refl + "_c05.tga"));
@@ -63,8 +60,8 @@ public class PBRShader implements Shader {
     public void init() {
         loadReflection("desertsky");
 
-        String vert = Gdx.files.internal("Shaders/VS_ShaderPlain.vsh").readString();
-        String frag = Gdx.files.internal("Shaders/ShaderPlain.fsh").readString();
+        String vert = Gdx.files.internal(Resources.vshader).readString();
+        String frag = Gdx.files.internal(Resources.fshader).readString();
         program = new ShaderProgram(vert, frag);
         if (!program.isCompiled()){
             Logger.log(Logger.ANDREAS,Logger.INFO, program.getLog());
@@ -153,13 +150,16 @@ public class PBRShader implements Shader {
         if(currentMaterial!=renderable.material){
             currentMaterial=renderable.material;}
         program.setUniformMatrix(u_worldTrans, renderable.worldTransform);
+        if(currentMaterial.get(PBRTextureAttribute.Albedo) != null) {
         ((PBRTextureAttribute)currentMaterial.get(PBRTextureAttribute.Albedo)).textureDescription.texture.bind(1);
-        program.setUniformi(albedo, 1);
+        program.setUniformi(albedo, 1);}
         //program.setUniformf(albedo, albedoColor);
+        if(currentMaterial.get(PBRTextureAttribute.Metallic) != null) {
         ((PBRTextureAttribute)currentMaterial.get(PBRTextureAttribute.Metallic)).textureDescription.texture.bind(2);
-        program.setUniformi(metallic, 2);
+        program.setUniformi(metallic, 2);}
+        if(currentMaterial.get(PBRTextureAttribute.Normal) != null){
         ((PBRTextureAttribute)currentMaterial.get(PBRTextureAttribute.Normal)).textureDescription.texture.bind(3);
-        program.setUniformi(normal, 3);
+        program.setUniformi(normal, 3);}
         //program.setUniformf(metallic, metallicValue);
         program.setUniformf(vLightPos0, new Vector3(lightPos));
         program.setUniformf(vLightA0,  0.5f, 0.5f, 0.5f);

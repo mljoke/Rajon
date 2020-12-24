@@ -4,8 +4,6 @@ import com.badlogic.ashley.core.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.g3d.particles.ParticleEffect;
-import com.badlogic.gdx.graphics.g3d.particles.emitters.RegularEmitter;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
@@ -19,7 +17,7 @@ import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.mljoke.rajon.*;
 import com.mljoke.rajon.components.*;
 import com.mljoke.rajon.java.Settings;
-import com.mljoke.rajon.managers.EntityFactory;
+import com.mljoke.rajon.screens.GameScene;
 
 public class PlayerSystem extends EntitySystem implements EntityListener {
 
@@ -33,7 +31,7 @@ public class PlayerSystem extends EntitySystem implements EntityListener {
     private final Vector3 tmp = new Vector3();
     private final PerspectiveCamera camera;
 //    private GameWorld gameWorld;
-    private Editor editor;
+    private GameScene editor;
     private ClosestRayResultCallback rayTestCB;
     private Vector3 rayFrom = new Vector3();
     private Vector3 rayTo = new Vector3();
@@ -47,7 +45,7 @@ public class PlayerSystem extends EntitySystem implements EntityListener {
         rayTestCB = new ClosestRayResultCallback(Vector3.Zero, Vector3.Z);
     }
 
-    public PlayerSystem(PerspectiveCamera camera, Editor gameWorld) {
+    public PlayerSystem(PerspectiveCamera camera, GameScene gameWorld) {
         this.camera = camera;
         this.editor = gameWorld;
         rayTestCB = new ClosestRayResultCallback(Vector3.Zero, Vector3.Z);
@@ -74,8 +72,8 @@ public class PlayerSystem extends EntitySystem implements EntityListener {
     public void update(float delta) {
         if (player == null) return;
         updateMovement(delta);
-        updateStatus();
-        checkGameOver();
+        //updateStatus();
+        //checkGameOver();
 
     }
 
@@ -94,50 +92,50 @@ public class PlayerSystem extends EntitySystem implements EntityListener {
 
         camera.rotate(camera.up, deltaX);
 
-        tmp.set(camera.direction).crs(camera.up);
+        tmp.set(camera.direction).crs(camera.up).nor();
         camera.direction.rotate(tmp, deltaY);
 
         tmp.set(0, 0, 0);
-        characterComponent.characterDirection.set(-1, 0, 0).rot(modelComponent.instance.transform).nor();
-        characterComponent.walkDirection.set(0, 0, 0);
+        characterComponent.getCharacterDirection().set(-1, 0, 0).rot(modelComponent.getInstance().transform).nor();
+        characterComponent.getWalkDirection().set(0, 0, 0);
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            characterComponent.walkDirection.add(camera.direction.x, 0, camera.direction.z);
+            characterComponent.getWalkDirection().add(camera.direction.x, 0, camera.direction.z);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && Gdx.input.isKeyPressed(Input.Keys.W)) {
             Control.run(delta);
-            characterComponent.walkDirection.scl(2f);
+            characterComponent.getWalkDirection().scl(2f);
         } else Control.run(-delta);
         camera.fieldOfView = Control.getFoV();
         if (Gdx.input.isKeyPressed(Input.Keys.S))
-            characterComponent.walkDirection.sub(camera.direction.x, 0, camera.direction.z);
+            characterComponent.getWalkDirection().sub(camera.direction.x, 0, camera.direction.z);
         if (Gdx.input.isKeyPressed(Input.Keys.A)) tmp.set(camera.direction).crs(camera.up).scl(-1);
         if (Gdx.input.isKeyPressed(Input.Keys.D)) tmp.set(camera.direction).crs(camera.up);
-        characterComponent.walkDirection.add(tmp);
-        characterComponent.walkDirection.scl(10f * delta);
-        characterComponent.characterController.setWalkDirection(characterComponent.walkDirection);
+        characterComponent.getWalkDirection().add(tmp);
+        characterComponent.getWalkDirection().scl(10f * delta);
+        characterComponent.getCharacterController().setWalkDirection(characterComponent.getWalkDirection());
         Matrix4 ghost = new Matrix4();
         Vector3 translation = new Vector3();
-        characterComponent.ghostObject.getWorldTransform(ghost);   //TODO export this
+        characterComponent.getGhostObject().getWorldTransform(ghost);   //TODO export this
         ghost.getTranslation(translation);
-        modelComponent.instance.transform.set(translation.x, translation.y, translation.z, camera.direction.x, camera.direction.y, camera.direction.z, 0);
+        modelComponent.getInstance().transform.set(translation.x, translation.y, translation.z, camera.direction.x, camera.direction.y, camera.direction.z, 0);
         camera.position.set(translation.x, translation.y, translation.z);
         camera.update(true);
         //dome.getComponent(ModelComponent.class).instance.transform.setToTranslation(translation.x, translation.y, translation.z);
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            if (characterComponent.characterController.onGround()) {
-            characterComponent.characterController.jump(new Vector3(0, 10, 0));
+            if (characterComponent.getCharacterController().canJump()) {
+            characterComponent.getCharacterController().jump(new Vector3(0, 10, 0));
             }
         }
         if (Gdx.input.justTouched()) fire();
-        if (Gdx.input.isKeyPressed(Input.Keys.F1)) {
-                Editor.debug = false;
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
+                GameScene.Companion.setDebug(!GameScene.Companion.getDebug());
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             boolean result = false;
             Ray ray = camera.getPickRay(Gdx.graphics.getWidth() >> 1, Gdx.graphics.getHeight() >> 1);
             rayTo.set(ray.direction).scl(5f).add(ray.origin);
             ClosestRayResultCallback cb = new ClosestRayResultCallback(ray.origin, rayTo);
-            editor.bulletSystem.collisionWorld.rayTest(ray.origin, rayTo, cb);
+            editor.getBulletSystem().collisionWorld.rayTest(ray.origin, rayTo, cb);
             if (cb.hasHit()) {
                 btRigidBody body = (btRigidBody)(cb.getCollisionObject());
                 if (body != null && !body.isStaticObject() && !body.isKinematicObject()) {
@@ -154,7 +152,7 @@ public class PlayerSystem extends EntitySystem implements EntityListener {
                     setting.setTau(0.001f);
                     pickConstraint.setSetting(setting);
 
-                    ((btDynamicsWorld)editor.bulletSystem.collisionWorld).addConstraint(pickConstraint);
+                    ((btDynamicsWorld)editor.getBulletSystem().collisionWorld).addConstraint(pickConstraint);
                     pickDistance = rayTo.sub(camera.position).len();
 
                 }
@@ -170,8 +168,8 @@ public class PlayerSystem extends EntitySystem implements EntityListener {
             leftItem();
         }
 
-        gun.getComponent(ModelComponent.class).instance.transform.getTranslation(smooth);
-        gun.getComponent(ModelComponent.class).instance.transform.translate((smooth.x + (deltaX - smooth.x) * 0.05f) - 2.5f, 0, 0);
+       // gun.getComponent(ModelComponent.class).getInstance().transform.getTranslation(smooth);
+        //gun.getComponent(ModelComponent.class).getInstance().transform.translate((smooth.x + (deltaX - smooth.x) * 0.05f) - 2.5f, 0, 0);
     }
     btPoint2PointConstraint pickConstraint = null;
     btRigidBody pickedBody = null;
@@ -187,7 +185,7 @@ public class PlayerSystem extends EntitySystem implements EntityListener {
         rayTestCB.setRayFromWorld(rayFrom);
         rayTestCB.setRayToWorld(rayTo);
 
-        editor.bulletSystem.collisionWorld.rayTest(rayFrom, rayTo, rayTestCB);
+        editor.getBulletSystem().collisionWorld.rayTest(rayFrom, rayTo, rayTestCB);
 
         if (rayTestCB.hasHit()) {
             final btCollisionObject obj = rayTestCB.getCollisionObject();
@@ -207,15 +205,15 @@ public class PlayerSystem extends EntitySystem implements EntityListener {
             }
         }
 
-        ParticleEffect effect = gun.getComponent(FireParticleComponent.class).originalEffect.copy();
-        ((RegularEmitter) effect.getControllers().first().emitter).setEmissionMode(RegularEmitter.EmissionMode.Enabled);
-        effect.setTransform(gun.getComponent(ModelComponent.class).instance.transform);
-        effect.scale(2.5f, -1.9f, -4);
-        effect.init();
-        effect.start();
-        RenderSystem.particleSystem.add(effect);//TODO
-        gun.getComponent(AnimationComponent.class).animate(gun.getComponent(ModelComponent.class).instance.animations.get(0).id, 1, 1);
-        Logger.log(Logger.ANDREAS, Logger.INFO, gun.getComponent(ModelComponent.class).instance.animations.get(0).id);
+//        ParticleEffect effect = gun.getComponent(FireParticleComponent.class).originalEffect.copy();
+//        ((RegularEmitter) effect.getControllers().first().emitter).setEmissionMode(RegularEmitter.EmissionMode.Enabled);
+//        effect.setTransform(gun.getComponent(ModelComponent.class).getInstance().transform);
+//        effect.scale(2.5f, -1.9f, -4);
+//        effect.init();
+//        effect.start();
+        //RenderSystem.particleSystem.add(effect);//TODO
+        //gun.getComponent(AnimationComponent.class).animate(gun.getComponent(ModelComponent.class).getModel().animations.get(0).id, 1, 1);
+        //Logger.log(Logger.ANDREAS, Logger.INFO, gun.getComponent(ModelComponent.class).getInstance().animations.get(0).id);
     }
 
     private void updateStatus() {
@@ -224,7 +222,7 @@ public class PlayerSystem extends EntitySystem implements EntityListener {
 
     private void leftItem() {
         if (pickConstraint != null) {
-            ((btDynamicsWorld)editor.bulletSystem.collisionWorld).removeConstraint(pickConstraint);
+            ((btDynamicsWorld)editor.getBulletSystem().collisionWorld).removeConstraint(pickConstraint);
             pickConstraint.dispose();
             pickConstraint = null;
         }

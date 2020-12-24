@@ -1,41 +1,32 @@
 package com.mljoke.rajon
 
 import com.badlogic.gdx.ApplicationAdapter
-import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Gdx.gl
 import com.badlogic.gdx.Gdx.graphics
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.GL20
-import com.mljoke.rajon.java.Assets
 import com.mljoke.rajon.java.Settings
-import com.mljoke.rajon.screens.EditorScene
+import com.mljoke.rajon.screens.GameScene
 
 class Core : ApplicationAdapter() {
-    var screen : Screen? = null
+    lateinit var screen: Screen
 
     override fun create() {
+        //Load Resources
         Assets()
+        //Load Settings
         Settings()
-        setScreen(EditorScene(this))
+        //Create Perspective Camera
+        setScreen(GameScene())
     }
 
-    override fun resize(width: Int, height: Int) { screen?.resize(width, height) }
+    override fun resize(width: Int, height: Int) = screen.resize(width, height)
 
-    fun setScreen(screen: EditorScene) {
-        if (this.screen != null){
-            this.screen!!.hide()
-            this.screen!!.dispose()
-        }
-        this.screen = screen
-        if (this.screen != null){
-            (this.screen as EditorScene).show()
-            (this.screen as EditorScene).resize(graphics.width, graphics.height)
-        }
-    }
+    private fun setScreen(scr: GameScene) = scr.apply { screen = this }
 
     override fun render() {
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)
-        screen?.render(graphics.deltaTime)
+        gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)
+        screen.render(graphics.deltaTime)
     }
 
     override fun dispose() {
@@ -43,30 +34,33 @@ class Core : ApplicationAdapter() {
         Assets.dispose()
     }
 
-    companion object {
-        @kotlin.jvm.JvmField
-        var VIRTUAL_HEIGHT = 900
-        @kotlin.jvm.JvmField
-        var VIRTUAL_WIDTH = 1600
-    }
-}
-
-object Test {
-    var HP = 100
-    var EXP = 0
-    var readline = readLine()
-    @JvmStatic
-    fun main(arg: Array<String>) {
-        while(readline.equals("q")) {
-            when(readline) {
-                "1" -> HP = HP.minus(1)
-                "2" ->  EXP += 1
-                else -> " "
+/*    *//**init simple model control*//*
+    private fun movement() {
+        instance.transform.getTranslation(position)
+        with(position) {
+            when {
+                input.isKeyPressed(ESCAPE) -> app.exit()
+                input.isKeyPressed(W) -> x = x.plus(graphics.deltaTime)
+                input.isKeyPressed(S) -> x = x.minus(graphics.deltaTime)
+                input.isKeyPressed(A) -> z = z.minus(graphics.deltaTime)
+                input.isKeyPressed(D) -> z = z.plus(graphics.deltaTime)
             }
-            println("HP: $HP")
-            println("EXP: $EXP")
-            readline = readLine()
         }
-
     }
+
+    private fun rotate() {
+        with(rotation, {
+            when {
+                input.isKeyPressed(NUM_1) -> x = x.plus(graphics.deltaTime * 100)
+                input.isKeyPressed(NUM_2) -> y = y.plus(graphics.deltaTime * 100)
+                input.isKeyPressed(NUM_3) -> z = z.plus(graphics.deltaTime * 100)
+            }
+        })
+    }
+
+    private fun updateTransformation() {
+        instance.transform.setFromEulerAngles(rotation.z, rotation.y, rotation.x)
+            .trn(position.x, position.y, position.z)
+            .scale(scale, scale, scale)
+    }*/
 }

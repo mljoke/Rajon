@@ -6,8 +6,9 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.utils.Align;
-import com.mljoke.rajon.java.Assets;
+import com.mljoke.rajon.Assets;
 import com.mljoke.rajon.java.Settings;
+
 
 public class HealthWidget extends Actor {
     private ProgressBar healthBar;

@@ -2,7 +2,7 @@ package com.mljoke.rajon.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.mljoke.rajon.Core;
+import com.mljoke.rajon.java.Core;
 import com.mljoke.rajon.GameUI;
 import com.mljoke.rajon.GameWorld;
 import com.mljoke.rajon.java.Settings;

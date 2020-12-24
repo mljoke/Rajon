@@ -1,14 +1,12 @@
 package com.mljoke.rajon.java;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.mljoke.rajon.Resources;
 
 public class Assets {
     public static Skin skin;
@@ -16,14 +14,11 @@ public class Assets {
 
     public Assets() {
         skin = new Skin();
-        FileHandle fileHandle = Gdx.files.internal("skin/uiskin.json");
-        FileHandle atlasFile = fileHandle.sibling("uiskin.atlas");
-        if (atlasFile.exists()) {
-            skin.addRegions(new TextureAtlas(atlasFile));
-        }
-        skin.load(fileHandle);
-        int i = 0;
         assetManager = new AssetManager();
+//        FileHandle fileHandle = Gdx.files.internal("skin/uiskin.json");
+//        assetManager.load("skin/uiskin.json", Skin.class);
+        int i = 0;
+
         for (String s : Resources.models) {
 
             if (!assetManager.isLoaded(s)) {
@@ -41,6 +36,15 @@ public class Assets {
                 assetManager.finishLoading();
             }
         }
+
+            if (!assetManager.isLoaded(Resources.skin)) {
+                SkinLoader.SkinParameter params = new SkinLoader.SkinParameter(Resources.atlas);
+                assetManager.load(Resources.icons, TextureAtlas.class);
+                assetManager.load(Resources.skin, Skin.class, params);
+                assetManager.finishLoading();
+            }
+
+        skin = assetManager.get(Resources.skin);
     }
 
     public static <T> T get(String index) {

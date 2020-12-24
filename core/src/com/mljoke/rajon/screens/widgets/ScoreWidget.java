@@ -6,8 +6,9 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.mljoke.rajon.java.Assets;
+
 import com.mljoke.rajon.components.PlayerComponent;
+import com.mljoke.rajon.java.Assets;
 
 public class ScoreWidget extends Actor {
     private Label label;

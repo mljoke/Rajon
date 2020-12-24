@@ -3,16 +3,13 @@ package com.mljoke.rajon;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.GL30;
-import com.badlogic.gdx.graphics.g3d.Model;
-import com.badlogic.gdx.graphics.g3d.model.Node;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.Bullet;
 import com.badlogic.gdx.physics.bullet.DebugDrawer;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.mljoke.rajon.components.CharacterComponent;
-import com.mljoke.rajon.components.ModelComponent;
+import com.mljoke.rajon.java.ModelComponent;
 import com.mljoke.rajon.java.Settings;
-import com.mljoke.rajon.managers.EntityFactory;
+import com.mljoke.rajon.java.EntityFactory;
 import com.mljoke.rajon.systems.*;
 import com.procedural.world.PBRShader;
 
@@ -40,10 +37,10 @@ public class GameWorld {
 
     private void addSystems(GameUI gameUI) {
         engine = new Engine();
-        engine.addSystem(renderSystem = new RenderSystem());
+        //engine.addSystem(renderSystem = new RenderSystem());
         EntityFactory.renderSystem = renderSystem;
         engine.addSystem(bulletSystem = new BulletSystem());
-        engine.addSystem(playerSystem = new PlayerSystem(renderSystem.perspectiveCamera, gameUI, this));
+        //engine.addSystem(playerSystem = new PlayerSystem(renderSystem.perspectiveCamera, gameUI, this));
        //engine.addSystem(new EnemySystem(this));
         engine.addSystem(new StatusSystem(this));
         if (debug) bulletSystem.collisionWorld.setDebugDrawer(this.debugDrawer);
@@ -73,7 +70,7 @@ public class GameWorld {
         engine.addEntity(character);
         engine.addEntity(gun = EntityFactory.loadGun(2.5f, -1.9f, -4));
         playerSystem.gun = gun;
-        renderSystem.gun = gun;
+        //renderSystem.gun = gun;
     }
 
     public void render(float delta) {
@@ -99,7 +96,7 @@ public class GameWorld {
     protected void renderWorld(float delta) {
         engine.update(delta);
         if (debug) {
-            debugDrawer.begin(renderSystem.perspectiveCamera);
+            //debugDrawer.begin(renderSystem.perspectiveCamera);
             bulletSystem.collisionWorld.debugDrawWorld();
             debugDrawer.end();
         }
@@ -110,16 +107,16 @@ public class GameWorld {
     }
 
     public void dispose() {
-        bulletSystem.collisionWorld.removeAction(character.getComponent(CharacterComponent.class).characterController);
-        bulletSystem.collisionWorld.removeCollisionObject(character.getComponent(CharacterComponent.class).ghostObject);
+        bulletSystem.collisionWorld.removeAction(character.getComponent(CharacterComponent.class).getCharacterController());
+        bulletSystem.collisionWorld.removeCollisionObject(character.getComponent(CharacterComponent.class).getGhostObject());
         bulletSystem.dispose();
 
         bulletSystem = null;
         renderSystem.dispose();
 
-        character.getComponent(CharacterComponent.class).characterController.dispose();
-        character.getComponent(CharacterComponent.class).ghostObject.dispose();
-        character.getComponent(CharacterComponent.class).ghostShape.dispose();
+        character.getComponent(CharacterComponent.class).getCharacterController().dispose();
+        character.getComponent(CharacterComponent.class).getCharacterController().dispose();
+        character.getComponent(CharacterComponent.class).getCharacterController().dispose();
 //        EntityFactory.dispose();
     }
 

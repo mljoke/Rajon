@@ -33,4 +33,6 @@ class EditorScene(var game: Core) : Screen {
         editor.dispose()
     }
 
+
+
 }

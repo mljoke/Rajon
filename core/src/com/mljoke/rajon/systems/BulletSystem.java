@@ -10,10 +10,10 @@ import com.mljoke.rajon.components.*;
 public class BulletSystem extends EntitySystem implements EntityListener {
     public final btCollisionConfiguration collisionConfiguration;
     public final btCollisionDispatcher dispatcher;
-    public final btBroadphaseInterface sweep;
+    public final btBroadphaseInterface broadphase;;
     public final btConstraintSolver solver;
     public final btDiscreteDynamicsWorld collisionWorld;
-    private btGhostPairCallback ghostPairCallback;
+    private final btGhostPairCallback ghostPairCallback;
     public int maxSubSteps = 5;
     public float fixedTimeStep = 1f / 60f;
 
@@ -48,12 +48,12 @@ public class BulletSystem extends EntitySystem implements EntityListener {
         myContactListener.enable();
         collisionConfiguration = new btDefaultCollisionConfiguration();
         dispatcher = new btCollisionDispatcher(collisionConfiguration);
-        sweep =  new btAxisSweep3(new Vector3(-1000, -1000, -1000), new Vector3(1000, 1000, 1000));
+        broadphase =  new btAxisSweep3(new Vector3(-1000, -1000, -1000), new Vector3(1000, 1000, 1000));
         solver = new btSequentialImpulseConstraintSolver();
-        collisionWorld = new btDiscreteDynamicsWorld(dispatcher, sweep, solver, collisionConfiguration);
+        collisionWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
         ghostPairCallback = new btGhostPairCallback();
-        sweep.getOverlappingPairCache().setInternalGhostPairCallback(ghostPairCallback);
-        //this.collisionWorld.setGravity(new Vector3(0, -10f, 0));
+        broadphase.getOverlappingPairCache().setInternalGhostPairCallback(ghostPairCallback);
+        this.collisionWorld.setGravity(new Vector3(0, -10f, 0));
     }
 
     @Override
@@ -64,7 +64,7 @@ public class BulletSystem extends EntitySystem implements EntityListener {
     public void dispose() {
         collisionWorld.dispose();
         if (solver != null) solver.dispose();
-        if (sweep != null) sweep.dispose();
+        if (broadphase != null) broadphase.dispose();
         if (dispatcher != null) dispatcher.dispose();
         if (collisionConfiguration != null) collisionConfiguration.dispose();
         ghostPairCallback.dispose();
@@ -73,19 +73,19 @@ public class BulletSystem extends EntitySystem implements EntityListener {
     @Override
     public void entityAdded(Entity entity) {
         BulletComponent bulletComponent = entity.getComponent(BulletComponent.class);
-        if (bulletComponent.body != null) {
-            collisionWorld.addRigidBody((btRigidBody) bulletComponent.body);
+        if (bulletComponent.getBody() != null) {
+            collisionWorld.addRigidBody((btRigidBody) bulletComponent.getBody());
         }
     }
 
     public void removeBody(Entity entity) {
         BulletComponent comp = entity.getComponent(BulletComponent.class);
         if (comp != null)
-            collisionWorld.removeCollisionObject(comp.body);
+            collisionWorld.removeCollisionObject(comp.getBody());
         CharacterComponent character = entity.getComponent(CharacterComponent.class);
         if (character != null) {
-            collisionWorld.removeAction(character.characterController);
-            collisionWorld.removeCollisionObject(character.ghostObject);
+            collisionWorld.removeAction(character.getCharacterController());
+            collisionWorld.removeCollisionObject(character.getGhostObject());
         }
     }
 

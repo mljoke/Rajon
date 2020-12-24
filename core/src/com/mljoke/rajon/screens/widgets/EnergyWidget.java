@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.utils.Align;
-import com.mljoke.rajon.java.Assets;
+import com.mljoke.rajon.Assets;
 import com.mljoke.rajon.java.Settings;
 
 
@@ -53,7 +53,9 @@ public class EnergyWidget extends Actor {
         progressBarStyle.knob.setMinHeight(height);
         label.setSize(width, height);
     }
-
+    public void setLabel(String value) {
+        label.setText(value);
+    }
     public void setValue(float value) {
         energyBar.setValue(value);
     }

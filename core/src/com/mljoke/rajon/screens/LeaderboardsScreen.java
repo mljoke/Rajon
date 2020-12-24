@@ -11,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mljoke.rajon.java.Assets;
-import com.mljoke.rajon.Core;
+import com.mljoke.rajon.java.Core;
 import com.mljoke.rajon.java.Settings;
 
 public class LeaderboardsScreen implements Screen {

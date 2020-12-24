@@ -2,7 +2,10 @@ package com.mljoke.rajon;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.mljoke.rajon.java.Core;
 import com.mljoke.rajon.screens.widgets.*;
+
+import static com.mljoke.rajon.java.Core.*;
 
 public class GameUI {
     private Core game;
@@ -15,7 +18,7 @@ public class GameUI {
 
     public GameUI(Core game) {
         this.game = game;
-        stage = new Stage(new FitViewport(Core.VIRTUAL_WIDTH, Core.VIRTUAL_HEIGHT));
+        stage = new Stage(new FitViewport(VIRTUAL_WIDTH, VIRTUAL_HEIGHT));
         setWidgets();
         configureWidgets();
     }
@@ -30,12 +33,13 @@ public class GameUI {
 
     public void configureWidgets() {
         healthWidget.setSize(140, 25);
-        healthWidget.setPosition(Core.VIRTUAL_WIDTH / 2 - healthWidget.getWidth() / 2, 0); scoreWidget.setSize(140, 25);
-        scoreWidget.setPosition(0, Core.VIRTUAL_HEIGHT - scoreWidget.getHeight()); pauseWidget.setSize(64, 64);
-        pauseWidget.setPosition(Core.VIRTUAL_WIDTH - pauseWidget.getWidth(), Core.VIRTUAL_HEIGHT - pauseWidget.getHeight());
+        healthWidget.setPosition(VIRTUAL_WIDTH / 2 - healthWidget.getWidth() / 2, 0);
+        scoreWidget.setSize(140, 25);
+        scoreWidget.setPosition(0, VIRTUAL_HEIGHT - scoreWidget.getHeight()); pauseWidget.setSize(64, 64);
+        pauseWidget.setPosition(VIRTUAL_WIDTH - pauseWidget.getWidth(), VIRTUAL_HEIGHT - pauseWidget.getHeight());
         gameOverWidget.setSize(280, 100);
-        gameOverWidget.setPosition(Core.VIRTUAL_WIDTH / 2 - 280 / 2, Core.VIRTUAL_HEIGHT / 2);
-        crosshairWidget.setPosition(Core.VIRTUAL_WIDTH / 2 - 16, Core.VIRTUAL_HEIGHT / 2 - 16);
+        gameOverWidget.setPosition(VIRTUAL_WIDTH / 2 - 280 / 2, VIRTUAL_HEIGHT / 2);
+        crosshairWidget.setPosition(VIRTUAL_WIDTH / 2 - 16, VIRTUAL_HEIGHT / 2 - 16);
         crosshairWidget.setSize(32, 32);
         stage.addActor(healthWidget);
         stage.addActor(scoreWidget);

@@ -6,7 +6,7 @@ import com.badlogic.gdx.physics.bullet.Bullet;
 import com.badlogic.gdx.physics.bullet.DebugDrawer;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.mljoke.rajon.java.Settings;
-import com.mljoke.rajon.managers.EntityFactory;
+import com.mljoke.rajon.java.EntityFactory;
 import com.mljoke.rajon.systems.*;
 
 public class Editor {
@@ -26,24 +26,23 @@ public class Editor {
     }
 
     private void setDebug() {
-        if (debug) {
             debugDrawer = new DebugDrawer();
             debugDrawer.setDebugMode(btIDebugDraw.DebugDrawModes.DBG_MAX_DEBUG_DRAW_MODE);
-        }
     }
 
     private void addSystems() {
         engine = new Engine();
-        engine.addSystem(renderSystem = new RenderSystem());
+        //engine.addSystem(renderSystem = new RenderSystem());
         EntityFactory.renderSystem = renderSystem;
-        engine.addSystem(playerSystem = new PlayerSystem(renderSystem.perspectiveCamera, this));
+        //engine.addSystem(playerSystem = new PlayerSystem(renderSystem.perspectiveCamera, this));
         engine.addSystem(bulletSystem = new BulletSystem());
-        if (debug) bulletSystem.collisionWorld.setDebugDrawer(this.debugDrawer);
+        bulletSystem.collisionWorld.setDebugDrawer(this.debugDrawer);
     }
 
     private void addEntities() {
         engine.addEntity(EntityFactory.loadScene(0, 0, 0));
-        engine.addEntity(EntityFactory.createGimpact(bulletSystem, 0, 10, 0));
+        //engine.addEntity(EntityFactory.createGimpact(bulletSystem, 0, 10, 0));
+       // engine.addEntity(EntityFactory.createEnemy(bulletSystem, 0, 20, 0));
         createPlayer(0, 6, 0);
     }
     private void createPlayer(float x, float y, float z) {
@@ -51,7 +50,7 @@ public class Editor {
         engine.addEntity(character);
         engine.addEntity(gun = EntityFactory.loadGun(2.5f, -1.9f, -4));
         playerSystem.gun = gun;
-        renderSystem.gun = gun;
+        //renderSystem.gun = gun;
     }
     private void loadLevel() {
         engine.addEntity(EntityFactory.loadScene(0, 0, 0));
@@ -76,7 +75,7 @@ public class Editor {
     protected void renderWorld(float delta) {
         engine.update(delta);
         if (debug) {
-            debugDrawer.begin(renderSystem.perspectiveCamera);
+            //debugDrawer.begin(renderSystem.perspectiveCamera);
             bulletSystem.collisionWorld.debugDrawWorld();
             debugDrawer.end();
         }

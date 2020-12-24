@@ -1,11 +1,11 @@
 //
 //  ShaderPlain.vsh
 //
-#version 130
+#version 300 es
 precision highp float;
-attribute vec3    a_position;
-attribute vec3    a_normal;
-attribute vec2    a_texCoord0;
+layout(location = 0) in  vec3 a_position;
+layout(location = 1) in vec3    a_normal;
+layout(location = 2) in vec2    a_texCoord0;
 
 out vec3    normal;
 out vec3    FragPos;

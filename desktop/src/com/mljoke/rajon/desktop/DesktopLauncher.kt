@@ -13,7 +13,7 @@ object DesktopLauncher {
             fullscreen = false
             width = 1600
             height = 900
-            useHDPI = true
+            //useHDPI = true
             addIcon("icon.png", Files.FileType.Internal)
         }
         LwjglApplication(Core(), config)

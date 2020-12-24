@@ -10,7 +10,8 @@ import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.mljoke.rajon.GameWorld;
 import com.mljoke.rajon.components.*;
-import com.mljoke.rajon.managers.EntityFactory;
+import com.mljoke.rajon.java.ModelComponent;
+import com.mljoke.rajon.java.EntityFactory;
 
 import java.util.Random;
 
@@ -48,8 +49,8 @@ public class EnemySystem extends EntitySystem implements EntityListener {
 
         for (int i = 0; i < entities.size(); i++) {
             Entity e = entities.get(i);
-            ModelComponent mod = e.getComponent(ModelComponent.class);
-            ModelComponent playerModel = player.getComponent(ModelComponent.class);
+            com.mljoke.rajon.java.ModelComponent mod = e.getComponent(com.mljoke.rajon.java.ModelComponent.class);
+            com.mljoke.rajon.java.ModelComponent playerModel = player.getComponent(com.mljoke.rajon.java.ModelComponent.class);
             if (!e.getComponent(StatusComponent.class).alive)
                 mod.update(delta);
 
@@ -58,11 +59,11 @@ public class EnemySystem extends EntitySystem implements EntityListener {
                 e.getComponent(DieParticleComponent.class).used = true;
                 ParticleEffect effect = e.getComponent(DieParticleComponent.class).originalEffect.copy();
                 ((RegularEmitter) effect.getControllers().first().emitter).setEmissionMode(RegularEmitter.EmissionMode.EnabledUntilCycleEnd);
-                effect.setTransform(e.getComponent(ModelComponent.class).instance.transform);
+                effect.setTransform(e.getComponent(com.mljoke.rajon.java.ModelComponent.class).instance.transform);
                 effect.scale(3.25f, 1, 1.5f);
                 effect.init();
                 effect.start();
-                RenderSystem.particleSystem.add(effect);
+                //RenderSystem.particleSystem.add(effect);
                 Vector3 tr = new Vector3();
                         e.getComponent(ModelComponent.class).instance.transform.getTranslation(tr);
                 engine.addEntity(EntityFactory.createStaticEntity("deer.g3db","deer", tr));
@@ -83,15 +84,15 @@ public class EnemySystem extends EntitySystem implements EntityListener {
             //Calculate the transforms
             Quaternion rot = quat.setFromAxis(0, 1, 0, (float) Math.toDegrees(theta) + 90);
 
-            cm.get(e).characterDirection.set(-1, 0, 0).rot(mod.instance.transform);
-            cm.get(e).walkDirection.set(0, 0, 0);
-            cm.get(e).walkDirection.add(cm.get(e).characterDirection);
-            cm.get(e).walkDirection.scl(10f * delta);   //TODO make this change on difficulty
-            cm.get(e).characterController.setWalkDirection(cm.get(e).walkDirection);
+            cm.get(e).getCharacterDirection().set(-1, 0, 0).rot(mod.instance.transform);
+            cm.get(e).getWalkDirection().set(0, 0, 0);
+            cm.get(e).getWalkDirection().add(cm.get(e).getCharacterDirection());
+            cm.get(e).getWalkDirection().scl(10f * delta);   //TODO make this change on difficulty
+            cm.get(e).getCharacterController().setWalkDirection(cm.get(e).getWalkDirection());
 
             ghost.set(0, 0, 0, 0);
             translation.set(0, 0, 0);
-            cm.get(e).ghostObject.getWorldTransform(ghost);
+            cm.get(e).getGhostObject().getWorldTransform(ghost);
             ghost.getTranslation(translation);
 
             mod.instance.transform.set(translation.x, translation.y, translation.z, rot.x, rot.y, rot.z, rot.w);

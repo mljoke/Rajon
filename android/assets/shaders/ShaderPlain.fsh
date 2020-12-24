@@ -1,7 +1,7 @@
 //
 //  ShaderPlain.fsh
 //
-#version 130
+#version 300 es
 precision highp float;
 in vec4       vMaterialSpecular;
 in vec3       vMaterialDiffuse;
@@ -112,7 +112,7 @@ void main()
     float specularStrength = 0.5f;
     vec3 viewDir = normalize(u_view - FragPos);
     vec3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
     vec3 specular = light.specular * (spec * vec3(texture(material.specular, texCoord)));
 
     float depth = LinearizeDepth(gl_FragCoord.z) / zFar;
